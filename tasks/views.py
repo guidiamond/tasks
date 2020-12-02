@@ -1,10 +1,10 @@
-from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
-from tasks.serializer import TaskSerializer
-from tasks.models import Task
+from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
+from tasks.models import Task
+from tasks.serializer import TaskSerializer
 
 # Create your views here.
 

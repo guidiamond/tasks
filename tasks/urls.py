@@ -1,9 +1,7 @@
+from django.http import HttpResponseNotAllowed
 from django.urls import path
 
-from django.http import HttpResponseNotAllowed
-
 from . import views
-
 
 urlpatterns = [
     path("", views.index, name="index"),
