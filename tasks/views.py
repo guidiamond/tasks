@@ -1,10 +1,12 @@
-from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
+from django.http import HttpResponse, JsonResponse
+from tasks.serializer import TaskSerializer
+from tasks.models import Task
 from rest_framework.decorators import api_view
 from rest_framework.parsers import JSONParser
 
-from tasks.models import Task
-from tasks.serializer import TaskSerializer
+
+# Create your views here.
 
 
 def index(request):
@@ -14,26 +16,24 @@ def index(request):
 @api_view(["GET"])
 def get_tasks(request):
     if request.method == "GET":
-        task = TaskSerializer(Task.objects.all(), many=True)
-        return JsonResponse(task.data, safe=False)
+        serializer = TaskSerializer(Task.objects.all(), many=True)
+        return JsonResponse(serializer.data, safe=False)
 
 
 @api_view(["DELETE"])
 def delete_tasks(request):
     if request.method == "DELETE":
         Task.objects.all().delete()
-        return JsonResponse({"Status": "REMOVED SUCCESSFULLY!"}, status=200)
+        return JsonResponse({"Status": "Tasks deletadas"}, status=200)
 
 
 @api_view(["POST"])
-def create_new_task(request):
+def post_task(request):
     if request.method == "POST":
-        new_task = JSONParser().parse(request)
-        serializer = TaskSerializer(data=new_task)
+        data = JSONParser().parse(request)
+        serializer = TaskSerializer(data=data)
 
-        status = 404  # bad request
-        # check if request matches schema
         if serializer.is_valid():
             serializer.save()
-            status = 201  # created
-        return JsonResponse(serializer.errors, status=status)
+            return JsonResponse(serializer.data, status=201)
+        return JsonResponse(serializer.errors, status=400)
